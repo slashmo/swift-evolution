@@ -540,40 +540,6 @@ Resulting in logs like this:
 
 Allowing developers to track down the request specific logs by filtering logs by the `dinner-id` that may be encountering some slowness, or other issues.
 
-We do not stop there however, by instrumenting all functions with swift-tracing, we can obtain a full trace of the execution (in production), and analyze it later on using tracing systems such as [zipkin](https://zipkin.io), [jaeger](https://www.jaegertracing.io/docs/1.20/#trace-detail-view),  [Grafana](https://grafana.com/blog/2020/11/09/trace-discovery-in-grafana-tempo-using-prometheus-exemplars-loki-2.0-queries-and-more/), or others.
-
-
-
-```swift
-var context: LoggingContext = ...
-
-context.baggage.dinnerID = "1234"
-async let first = makeDinner(context: context)
-
-context.baggage.dinnerID = "5678"
-async let second = makeDinner(context: context)
-
-await first
-await second
-```
-
-Resulting in logs like this:
-
-```
-<timestamp> dinner-id=1234 makeDinner
-<timestamp> dinner-id=1234 chopVegetables
-  <timestamp> dinner-id=5678 makeDinner
-  <timestamp> dinner-id=5678 chopVegetables
-<timestamp> dinner-id=1234 marinateMeat
-<timestamp> dinner-id=1234 preheatOven
-  <timestamp> dinner-id=5678 marinateMeat
-<timestamp> dinner-id=1234 cook
-  <timestamp> dinner-id=5678 preheatOven
-  <timestamp> dinner-id=5678 cook
-```
-
-Allowing developers to track down the request specific logs by filtering logs by the `dinner-id` that may be encountering some slowness, or other issues.
-
 #### Function Tracing
 
 We do not stop there however, by instrumenting all functions with swift-tracing, we can obtain a full trace of the execution (in production), and analyze it later on using tracing systems such as [zipkin](https://zipkin.io), [jaeger](https://www.jaegertracing.io/docs/1.20/#trace-detail-view),  [Grafana](https://grafana.com/blog/2020/11/09/trace-discovery-in-grafana-tempo-using-prometheus-exemplars-loki-2.0-queries-and-more/), or others.
